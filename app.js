@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({
 
 app.get('/', function(req, res) {
   if (spotifyApi.getAccessToken()) {
-    return res.send('You are logged in.');
+    res.redirect('' + process.env.BRICKHACK_SLACK_URI + '');
   }
   return res.send('<a href="/authorise">Authorise</a>');
 });
@@ -54,7 +54,7 @@ app.post('/store', function(req, res) {
   spotifyApi.refreshAccessToken()
     .then(function(data) {
       spotifyApi.setAccessToken(data.body['access_token']);
-      if (data.body['refresh_token']) { 
+      if (data.body['refresh_token']) {
         spotifyApi.setRefreshToken(data.body['refresh_token']);
       }
       if (req.body.text.trim().length === 0) {
@@ -62,7 +62,7 @@ app.post('/store', function(req, res) {
       }
       if (req.body.text.indexOf(' - ') === -1) {
         var query = 'track:' + req.body.text;
-      } else { 
+      } else {
         var pieces = req.body.text.split(' - ');
         var query = 'artist:' + pieces[0].trim() + ' track:' + pieces[1].trim();
       }
