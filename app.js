@@ -57,7 +57,7 @@ app.post('/store', function(req, res) {
       if (data.body['refresh_token']) {
         spotifyApi.setRefreshToken(data.body['refresh_token']);
       }
-      if (req.body.text.trim().length === 0) {
+      if (req.body.text.trim().length === 0 || req.body.text.trim() === 'help') {
           return res.send('Enter the name of a song and the name of the artist, separated by a "-"\nExample: Blue (Da Ba Dee) - Eiffel 65');
       }
       if (req.body.text.indexOf(' - ') === -1) {
@@ -75,7 +75,7 @@ app.post('/store', function(req, res) {
           var track = results[0];
           spotifyApi.addTracksToPlaylist(process.env.SPOTIFY_USERNAME, process.env.SPOTIFY_PLAYLIST_ID, ['spotify:track:' + track.id])
             .then(function(data) {
-              return res.send('Track added: *' + track.name + '* by *' + track.artists[0].name + '*');
+              return res.send({'response_type': 'in_channel','text': 'Track added: *<'+ track.uri +'|' +  track.name + '>* by *' + track.artists[0].name + '*'});
             }, function(err) {
               return res.send(err.message);
             });
